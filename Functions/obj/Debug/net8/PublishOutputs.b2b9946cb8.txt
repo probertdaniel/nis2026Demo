@@ -1,0 +1,16 @@
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\FaultHandling.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\FaultHandling.deps.json
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\FaultHandling.pdb
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Azure.Functions.Worker.Extensions.Abstractions.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Azure.Functions.Extensions.Workflows.Abstractions.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Azure.Functions.Extensions.Workflows.Sdk.Package.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Azure.Functions.Extensions.Workflows.Sdk.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.DependencyInjection.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.Logging.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.Options.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Extensions.Primitives.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\Microsoft.Win32.SystemEvents.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\System.Drawing.Common.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\publish\runtimes\win\lib\net8.0\Microsoft.Win32.SystemEvents.dll

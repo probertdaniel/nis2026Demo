@@ -1,0 +1,32 @@
+{
+  "serviceProviderConnections": {
+    "sql": {
+      "parameterValues": {
+        "connectionString": "@appsetting('Sql_connectionString')"
+      },
+      "serviceProvider": {
+        "id": "/serviceProviders/sql"
+      },
+      "displayName": "OrdersDb"
+    },
+    "AzureBlob": {
+      "parameterValues": {
+        "connectionString": "@appsetting('AzureBlob_connectionString')"
+      },
+      "serviceProvider": {
+        "id": "/serviceProviders/AzureBlob"
+      },
+      "displayName": "CustomerProfiles"
+    },
+    "azurequeues": {
+      "parameterValues": {
+        "connectionString": "@appsetting('azurequeues_connectionString')"
+      },
+      "serviceProvider": {
+        "id": "/serviceProviders/azurequeues"
+      },
+      "displayName": "FaultQueue"
+    }
+  },
+  "managedApiConnections": {}
+}

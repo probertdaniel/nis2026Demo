@@ -1,0 +1,20 @@
+[
+  {
+    "name": "HandleFault",
+    "scriptFile": "FaultHandling.dll",
+    "entryPoint": "Affinus.AIS.FaultHandling.HandleFault.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "workflowName",
+        "direction": "In",
+        "type": "workflowActionTrigger",
+        "dataType": "String",
+        "properties": {}
+      }
+    ]
+  }
+]

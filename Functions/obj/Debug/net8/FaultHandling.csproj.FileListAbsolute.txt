@@ -1,0 +1,12 @@
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\FaultHandling.deps.json
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\FaultHandling.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\bin\Debug\net8\FaultHandling.pdb
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.csproj.AssemblyReference.cache
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.GeneratedMSBuildEditorConfig.editorconfig
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.AssemblyInfoInputs.cache
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.AssemblyInfo.cs
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.csproj.CoreCompileInputs.cache
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\refint\FaultHandling.dll
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\FaultHandling.pdb
+C:\Source\Affinus.AIS.FaultHandling\Functions\obj\Debug\net8\ref\FaultHandling.dll

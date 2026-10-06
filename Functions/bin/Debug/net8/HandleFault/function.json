@@ -1,0 +1,212 @@
+{
+  "Name": "HandleFault",
+  "ScriptFile": "FaultHandling.dll",
+  "FunctionDirectory": null,
+  "EntryPoint": "Affinus.AIS.FaultHandling.HandleFault.Run",
+  "Language": "net8",
+  "Properties": {},
+  "Bindings": [
+    {
+      "Name": "workflowName",
+      "Connection": null,
+      "Type": "workflowActionTrigger",
+      "Properties": {},
+      "Direction": "In",
+      "DataType": "String",
+      "Cardinality": null,
+      "IsTrigger": true,
+      "IsReturn": false,
+      "Raw": null
+    }
+  ],
+  "InputBindings": [
+    {
+      "Name": "workflowName",
+      "Connection": null,
+      "Type": "workflowActionTrigger",
+      "Properties": {},
+      "Direction": "In",
+      "DataType": "String",
+      "Cardinality": null,
+      "IsTrigger": true,
+      "IsReturn": false,
+      "Raw": null
+    }
+  ],
+  "OutputBindings": [],
+  "Trigger": {
+    "Name": "workflowName",
+    "Connection": null,
+    "Type": "workflowActionTrigger",
+    "Properties": {},
+    "Direction": "In",
+    "DataType": "String",
+    "Cardinality": null,
+    "IsTrigger": true,
+    "IsReturn": false,
+    "Raw": null
+  },
+  "InputSchema": {
+    "type": "object",
+    "properties": {
+      "workflowName": {
+        "type": "string"
+      },
+      "actionName": {
+        "type": "string"
+      },
+      "results": {
+        "type": "string"
+      },
+      "correlationId": {
+        "type": "string"
+      },
+      "runId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "workflowName",
+      "actionName",
+      "results",
+      "correlationId",
+      "runId"
+    ]
+  },
+  "OutputSchema": {
+    "definitions": {
+      "FaultDiagnostics": {
+        "type": "object",
+        "properties": {
+          "WorkflowName": {
+            "type": "string"
+          },
+          "ActionName": {
+            "type": "string"
+          },
+          "ActionPath": {
+            "type": "string"
+          },
+          "ActionType": {
+            "type": "string"
+          },
+          "Connector": {
+            "type": "string"
+          },
+          "Operation": {
+            "type": "string"
+          },
+          "Target": {
+            "type": "string"
+          },
+          "HttpStatus": {
+            "type": "integer"
+          },
+          "PlatformCode": {
+            "type": "string"
+          },
+          "SystemCode": {
+            "type": "string"
+          },
+          "Category": {
+            "type": "string"
+          },
+          "IsTransient": {
+            "type": "boolean"
+          },
+          "RunId": {
+            "type": "string"
+          },
+          "TrackingId": {
+            "type": "string"
+          },
+          "ClientTrackingId": {
+            "type": "string"
+          },
+          "StartTime": {
+            "type": "string"
+          },
+          "EndTime": {
+            "type": "string"
+          },
+          "DefinitionFound": {
+            "type": "boolean"
+          },
+          "DefinitionFile": {
+            "type": "string"
+          },
+          "DefinitionLastModifiedUtc": {
+            "type": "string"
+          },
+          "ChildFaultCode": {
+            "type": "string"
+          },
+          "Notes": {
+            "type": "string"
+          },
+          "RawError": {
+            "type": "string"
+          },
+          "HandlerVersion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "WorkflowName",
+          "ActionName",
+          "ActionPath",
+          "ActionType",
+          "Connector",
+          "Operation",
+          "Target",
+          "HttpStatus",
+          "PlatformCode",
+          "SystemCode",
+          "Category",
+          "IsTransient",
+          "RunId",
+          "TrackingId",
+          "ClientTrackingId",
+          "StartTime",
+          "EndTime",
+          "DefinitionFound",
+          "DefinitionFile",
+          "DefinitionLastModifiedUtc",
+          "ChildFaultCode",
+          "Notes",
+          "RawError",
+          "HandlerVersion"
+        ]
+      }
+    },
+    "type": "object",
+    "properties": {
+      "FaultCode": {
+        "type": "string"
+      },
+      "Source": {
+        "type": "string"
+      },
+      "Message": {
+        "type": "string"
+      },
+      "CorrelationId": {
+        "type": "string"
+      },
+      "Severity": {
+        "type": "string"
+      },
+      "Diagnostics": {
+        "$ref": "#/definitions/FaultDiagnostics"
+      }
+    },
+    "required": [
+      "FaultCode",
+      "Source",
+      "Message",
+      "CorrelationId",
+      "Severity",
+      "Diagnostics"
+    ]
+  }
+}

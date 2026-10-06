@@ -1,0 +1,81 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "actions": {
+      "Known_sku": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "not": {
+                "startsWith": [
+                  "@{toUpper(triggerBody()?['sku'])}",
+                  "BAD"
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Price": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 200,
+              "body": {
+                "sku": "@{triggerBody()?['sku']}",
+                "unitPrice": 12.5
+              }
+            },
+            "runAfter": {}
+          }
+        },
+        "else": {
+          "actions": {
+            "Problem": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 422,
+                "headers": {
+                  "Content-Type": "application/problem+json"
+                },
+                "body": {
+                  "type": "https://example.org/problems/unknown-sku",
+                  "title": "Unprocessable",
+                  "status": 422,
+                  "detail": "Unknown SKU '@{triggerBody()?['sku']}'"
+                }
+              },
+              "runAfter": {}
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "sku": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "kind": "Stateful"
+}

@@ -1,0 +1,54 @@
+### OrderSync demo requests (VS Code REST Client extension)
+# Paste the callback URLs from each workflow's Overview page in VS Code.
+@orderSync = http://localhost:7071/api/OrderSync/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=wmOMwRV_y_ksvuDF5OPe_IPQ2uSGT6hVD_6gY-hFz3M
+@orderSyncNoHandling = http://localhost:7071/api/OrderSyncNoHandling/triggers/When_a_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=yE-DlaBQLm-N1x7hQzKBwGVJRuIX1T6foYZ0ruSPHF0
+# Demo 1 uses @orderSyncNoHandling, Demo 2 uses @orderSync. Expected fault codes are for Demo 2.
+
+### Demo 1: the same SQL failure with no handling
+POST {{orderSyncNoHandling}}
+Content-Type: application/json
+
+{ "orderId": "SO-9931", "customer": { "id": "4471" }, "sku": "WIDGET-01", "quantity": 3, "depot": "MAN" }
+
+### 0. Happy path -> 200
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-demo-ok
+
+{ "orderId": "SO-{{$randomInt 10000 99999}}", "customer": { "id": "4471" }, "sku": "WIDGET-01", "quantity": 3, "depot": "MAN" }
+
+### 1. Your workflow: no customer -> FLOW-EXPR-400 (Flow)
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-demo-flow
+
+{ "orderId": "SO-{{$randomInt 10000 99999}}", "sku": "WIDGET-01", "quantity": 3, "depot": "MAN" }
+
+### 2. Blob Storage: no profile for customer 9999 -> BLOB-READ-404 (Data)
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-demo-blob
+
+{ "orderId": "SO-{{$randomInt 10000 99999}}", "customer": { "id": "9999" }, "sku": "WIDGET-01", "quantity": 3, "depot": "MAN" }
+
+### 3. SQL: SO-9931 already exists -> SQL-INSERT-409 (Data)
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-41217
+
+{ "orderId": "SO-9931", "customer": { "id": "4471" }, "sku": "WIDGET-01", "quantity": 3, "depot": "MAN" }
+
+### 4. HTTP API: unknown SKU -> HTTP-CALL-422 (Data)
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-demo-http
+
+{ "orderId": "SO-{{$randomInt 10000 99999}}", "customer": { "id": "4471" }, "sku": "BAD-01", "quantity": 3, "depot": "MAN" }
+
+### 5. Child workflow: unknown depot -> WF-CALL-400 (Data)
+POST {{orderSync}}
+Content-Type: application/json
+x-correlation-id: run-demo-child
+
+{ "orderId": "SO-{{$randomInt 10000 99999}}", "customer": { "id": "4471" }, "sku": "WIDGET-01", "quantity": 3, "depot": "XX" }
+

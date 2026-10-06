@@ -1,0 +1,232 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "actions": {
+            "Initialize_correlationId": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "correlationId",
+                            "type": "string",
+                            "value": "@{coalesce(triggerOutputs()?['headers']?['x-correlation-id'], concat('run-', workflow()?['run']?['name']))}"
+                        }
+                    ]
+                },
+                "runAfter": {}
+            },
+            "Try": {
+                "type": "Scope",
+                "actions": {
+                    "Validate_order": {
+                        "type": "Compose",
+                        "inputs": {
+                            "orderId": "@triggerBody()?['orderId']",
+                            "customerId": "@triggerBody()['customer']['id']",
+                            "sku": "@triggerBody()?['sku']",
+                            "quantity": "@triggerBody()?['quantity']",
+                            "depot": "@triggerBody()?['depot']"
+                        }
+                    },
+                    "Enrich_customer": {
+                        "type": "ServiceProvider",
+                        "inputs": {
+                            "parameters": {
+                                "containerName": "customers",
+                                "blobName": "@{outputs('Validate_order')?['customerId']}.json"
+                            },
+                            "serviceProviderConfiguration": {
+                                "connectionName": "AzureBlob",
+                                "operationId": "readBlob",
+                                "serviceProviderId": "/serviceProviders/AzureBlob"
+                            }
+                        },
+                        "runAfter": {
+                            "Validate_order": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Insert_order": {
+                        "type": "ServiceProvider",
+                        "inputs": {
+                            "parameters": {
+                                "tableName": "[dbo].[Orders]",
+                                "setColumns": {
+                                    "OrderId": "@{outputs('Validate_order')?['orderId']}",
+                                    "CustomerId": "@{outputs('Validate_order')?['customerId']}",
+                                    "Sku": "@{outputs('Validate_order')?['sku']}",
+                                    "Quantity": "@outputs('Validate_order')?['quantity']",
+                                    "CorrelationId": "@{variables('correlationId')}"
+                                }
+                            },
+                            "serviceProviderConfiguration": {
+                                "connectionName": "sql",
+                                "operationId": "insertRow",
+                                "serviceProviderId": "/serviceProviders/sql"
+                            }
+                        },
+                        "runAfter": {
+                            "Enrich_customer": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Price_order": {
+                        "type": "Http",
+                        "inputs": {
+                            "uri": "@{appsetting('PricingApiUrl')}",
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json",
+                                "x-correlation-id": "@{variables('correlationId')}"
+                            },
+                            "body": {
+                                "sku": "@{outputs('Validate_order')?['sku']}",
+                                "quantity": "@outputs('Validate_order')?['quantity']"
+                            },
+                            "retryPolicy": {
+                                "type": "none"
+                            }
+                        },
+                        "runAfter": {
+                            "Insert_order": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Notify_warehouse": {
+                        "type": "Workflow",
+                        "inputs": {
+                            "host": {
+                                "workflow": {
+                                    "id": "NotifyWarehouse"
+                                }
+                            },
+                            "headers": {
+                                "x-correlation-id": "@{variables('correlationId')}"
+                            },
+                            "body": {
+                                "orderId": "@{outputs('Validate_order')?['orderId']}",
+                                "depot": "@{outputs('Validate_order')?['depot']}"
+                            }
+                        },
+                        "runAfter": {
+                            "Price_order": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Respond_ok": {
+                        "type": "Response",
+                        "kind": "Http",
+                        "inputs": {
+                            "statusCode": 200,
+                            "body": {
+                                "orderId": "@{outputs('Validate_order')?['orderId']}",
+                                "unitPrice": "@body('Price_order')?['unitPrice']",
+                                "correlationId": "@{variables('correlationId')}"
+                            }
+                        },
+                        "runAfter": {
+                            "Notify_warehouse": [
+                                "Succeeded"
+                            ]
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Initialize_correlationId": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Catch": {
+                "type": "Scope",
+                "actions": {
+                    "If_Return_Error": {
+                        "type": "If",
+                        "expression": {
+                            "and": [
+                                {
+                                    "equals": [
+                                        "@triggerBody()?['returnError']",
+                                        true
+                                    ]
+                                }
+                            ]
+                        },
+                        "actions": {
+                            "Select_Failures": {
+                                "type": "Query",
+                                "inputs": {
+                                    "from": "@result('Try')",
+                                    "where": "@equals(item()?['status'], 'Failed')"
+                                }
+                            },
+                            "Return_Error_Response": {
+                                "type": "Response",
+                                "kind": "Http",
+                                "inputs": {
+                                    "statusCode": 500,
+                                    "body": "@body('Select_Failures')"
+                                },
+                                "runAfter": {
+                                    "Select_Failures": [
+                                        "SUCCEEDED"
+                                    ]
+                                }
+                            }
+                        },
+                        "else": {
+                            "actions": {}
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Try": [
+                        "TIMEDOUT",
+                        "FAILED"
+                    ]
+                }
+            }
+        },
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "method": "POST",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "orderId": {
+                                "type": "string"
+                            },
+                            "customer": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "sku": {
+                                "type": "string"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            },
+                            "depot": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}

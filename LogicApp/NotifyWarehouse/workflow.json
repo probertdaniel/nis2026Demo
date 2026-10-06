@@ -1,0 +1,74 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "actions": {
+      "Known_depot": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "contains": [
+                "@createArray('MAN','STO','LDN')",
+                "@triggerBody()?['depot']"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Accepted": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 202,
+              "body": {
+                "orderId": "@{triggerBody()?['orderId']}",
+                "depot": "@{triggerBody()?['depot']}"
+              }
+            },
+            "runAfter": {}
+          }
+        },
+        "else": {
+          "actions": {
+            "Rejected": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 400,
+                "body": {
+                  "reason": "Unknown depot '@{triggerBody()?['depot']}'",
+                  "trace": "depot-lookup/v1"
+                }
+              },
+              "runAfter": {}
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string"
+              },
+              "depot": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "kind": "Stateful"
+}

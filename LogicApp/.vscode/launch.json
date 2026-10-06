@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run/Debug logic app with local function LogicApp",
+      "type": "logicapp",
+      "request": "launch",
+      "funcRuntime": "coreclr",
+      "customCodeRuntime": "coreclr",
+      "isCodeless": true
+    }
+  ]
+}
